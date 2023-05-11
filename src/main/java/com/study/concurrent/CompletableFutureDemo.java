@@ -17,7 +17,13 @@
 
 package com.study.concurrent;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class CompletableFutureDemo {
 
@@ -35,5 +41,22 @@ public class CompletableFutureDemo {
             System.out.println("result：" + result);
         });
         System.out.println("main thread done");
+
+        Callable<String> task = () -> {
+            TimeUnit.SECONDS.sleep(1);
+            return "callable thread finish";
+        };
+
+        ListeningExecutorService executor =
+            MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
+        ListenableFuture<String> listenableFuture = executor.submit(task);
+        listenableFuture.addListener(() -> {
+            try {
+                System.out.print("result: " + future.get());
+                executor.shutdown();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, executor);
     }
 }

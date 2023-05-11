@@ -2,6 +2,8 @@ package com.study.concurrent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -15,6 +17,7 @@ public class CacheDemo {
     public ReentrantReadWriteLock.WriteLock wl = (ReentrantReadWriteLock.WriteLock) rwl.writeLock();
 
     public void processData() {
+        ConcurrentMap<String, String> map = new ConcurrentHashMap<>();
         rdl.lock();//获取读锁
         if (!update) {
             rdl.unlock();//释放读锁
